@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Intern Portal</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #fff);
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 90%;
+      max-width: 600px;
+      margin: 50px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+    input, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .top-donor {
+      font-weight: bold;
+      color: green;
+    }
+    .hidden {
+      display: none;
+    }
+    .logout-btn {
+      margin-top: 20px;
+      background-color: #dc3545;
+    }
+    .logout-btn:hover {
+      background-color: #c82333;
+    }
+    .reward-box {
+      background-color: #f1f1f1;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container login-container">
+    <h1>Intern Portal Login</h1>
+    <form id="login-form">
+      <input type="text" placeholder="Username" id="username" required />
+      <input type="password" placeholder="Password" id="password" required />
+      <button type="submit">Login</button>
+    </form>
+    <button id="signup-btn">Signup</button>
+  </div>
+
+  <div class="container dashboard-container hidden">
+    <h1 id="intern-name">Intern Name</h1>
+    <p id="referral-code">Referral Code: </p>
+    <p id="donations-raised">Donations Raised: </p>
+
+    <h2>🎁 Rewards</h2>
+    <div class="reward-box">Free T-shirt</div>
+    <div class="reward-box">Amazon Gift Card</div>
+    <div class="reward-box">Internship Certificate</div>
+
+    <h2>🏆 Leaderboard</h2>
+    <ul id="leaderboard-list"></ul>
+
+    <button class="logout-btn" id="logout-btn">Logout</button>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('login-form');
+    const signupBtn = document.getElementById('signup-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const dashboardContainer = document.querySelector('.dashboard-container');
+    const loginContainer = document.querySelector('.login-container');
+
+    // Simulated backend fetch
+    async function fetchInternData() {
+      return {
+        name: 'John Doe',
+        referralCode: 'johndoe2025',
+        donationsRaised: 1000
+      };
+    }
+
+    async function fetchLeaderboardData() {
+      return [
+        { name: 'Alice', donations: 1200 },
+        { name: 'John Doe', donations: 1000 },
+        { name: 'Bob', donations: 800 }
+      ];
+    }
+
+    async function showDashboard() {
+      const internData = await fetchInternData();
+      const leaderboardData = await fetchLeaderboardData();
+
+      loginContainer.classList.add('hidden');
+      dashboardContainer.classList.remove('hidden');
+
+      document.getElementById('intern-name').innerText = internData.name;
+      document.getElementById('referral-code').innerText = `Referral Code: ${internData.referralCode}`;
+      document.getElementById('donations-raised').innerText = `Donations Raised: ₹${internData.donationsRaised}`;
+
+      const leaderboardList = document.getElementById('leaderboard-list');
+      leaderboardList.innerHTML = '';
+
+      const topDonation = Math.max(...leaderboardData.map(entry => entry.donations));
+
+      leaderboardData.forEach(entry => {
+        const li = document.createElement('li');
+        li.innerText = `${entry.name} – ₹${entry.donations}`;
+        if (entry.donations === topDonation) {
+          li.classList.add('top-donor');
+        }
+        leaderboardList.appendChild(li);
+      });
+    }
+
+    function logout() {
+      dashboardContainer.classList.add('hidden');
+      loginContainer.classList.remove('hidden');
+      loginForm.reset();
+    }
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      showDashboard();
+    });
+
+    signupBtn.addEventListener('click', () => {
+      showDashboard();
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      logout();
+    });
+  </script>
+</body>
+</html>
